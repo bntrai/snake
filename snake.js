@@ -48,24 +48,13 @@ function gameLoop() {
     }
     count = 0;
 
-    // Clear the canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     // Move the snake's head
     snake.x += snake.dx;
     snake.y += snake.dy;
 
-    // Wrap the snake position on the edges of the canvas
-    if (snake.x < 0) {
-        snake.x = canvas.width - gridSize;
-    } else if (snake.x >= canvas.width) {
-        snake.x = 0;
-    }
-
-    if (snake.y < 0) {
-        snake.y = canvas.height - gridSize;
-    } else if (snake.y >= canvas.height) {
-        snake.y = 0;
+    // Check for wall collisions
+    if (snake.x < 0 || snake.x >= canvas.width || snake.y < 0 || snake.y >= canvas.height) {
+        resetGame();
     }
 
     // Add the new head position to the front of the snake body
@@ -75,6 +64,9 @@ function gameLoop() {
     if (snake.cells.length > snake.maxCells) {
         snake.cells.pop();
     }
+
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Draw the apple
     ctx.fillStyle = 'red';
@@ -99,11 +91,6 @@ function gameLoop() {
             }
         }
     });
-
-    // Check for wall collision
-    if (snake.x < 0 || snake.x >= canvas.width || snake.y < 0 || snake.y >= canvas.height) {
-        resetGame();
-    }
 }
 
 // Handle keyboard input for snake direction
@@ -132,4 +119,4 @@ function initializeGame(userSpeed, userGridSize) {
 }
 
 // Start the game with default settings (can be modified)
-initializeGame(4, 20);
+initializeGame(speed, gridSize);
