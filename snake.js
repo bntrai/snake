@@ -1,21 +1,23 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-const grid = 20;
+let gridSize = 20;  // Default grid size
+let speed = 4;      // Default speed
+
 let count = 0;
 
 let snake = {
     x: 160,
     y: 160,
-    dx: grid,
+    dx: gridSize,
     dy: 0,
     cells: [],
     maxCells: 4
 };
 
 let apple = {
-    x: 320,
-    y: 320
+    x: getRandomInt(0, canvas.width / gridSize) * gridSize,
+    y: getRandomInt(0, canvas.height / gridSize) * gridSize
 };
 
 // Function to get a random integer between min and max
@@ -29,19 +31,19 @@ function resetGame() {
     snake.y = 160;
     snake.cells = [];
     snake.maxCells = 4;
-    snake.dx = grid;
+    snake.dx = gridSize;
     snake.dy = 0;
 
-    apple.x = getRandomInt(0, 25) * grid;
-    apple.y = getRandomInt(0, 25) * grid;
+    apple.x = getRandomInt(0, canvas.width / gridSize) * gridSize;
+    apple.y = getRandomInt(0, canvas.height / gridSize) * gridSize;
 }
 
 // Function to handle the main game loop
 function gameLoop() {
     requestAnimationFrame(gameLoop);
 
-    // Slow down the game loop for a consistent speed
-    if (++count < 4) {
+    // Slow down the game loop according to the speed setting
+    if (++count < speed) {
         return;
     }
     count = 0;
@@ -55,13 +57,13 @@ function gameLoop() {
 
     // Wrap the snake position on the edges of the canvas
     if (snake.x < 0) {
-        snake.x = canvas.width - grid;
+        snake.x = canvas.width - gridSize;
     } else if (snake.x >= canvas.width) {
         snake.x = 0;
     }
 
     if (snake.y < 0) {
-        snake.y = canvas.height - grid;
+        snake.y = canvas.height - gridSize;
     } else if (snake.y >= canvas.height) {
         snake.y = 0;
     }
@@ -76,18 +78,18 @@ function gameLoop() {
 
     // Draw the apple
     ctx.fillStyle = 'red';
-    ctx.fillRect(apple.x, apple.y, grid - 1, grid - 1);
+    ctx.fillRect(apple.x, apple.y, gridSize - 1, gridSize - 1);
 
     // Draw the snake
     ctx.fillStyle = 'green';
     snake.cells.forEach((cell, index) => {
-        ctx.fillRect(cell.x, cell.y, grid - 1, grid - 1);
+        ctx.fillRect(cell.x, cell.y, gridSize - 1, gridSize - 1);
 
         // Check if the snake ate the apple
         if (cell.x === apple.x && cell.y === apple.y) {
             snake.maxCells++;
-            apple.x = getRandomInt(0, 25) * grid;
-            apple.y = getRandomInt(0, 25) * grid;
+            apple.x = getRandomInt(0, canvas.width / gridSize) * gridSize;
+            apple.y = getRandomInt(0, canvas.height / gridSize) * gridSize;
         }
 
         // Check if the snake collides with itself
@@ -107,20 +109,27 @@ function gameLoop() {
 // Handle keyboard input for snake direction
 document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft' && snake.dx === 0) {
-        snake.dx = -grid;
+        snake.dx = -gridSize;
         snake.dy = 0;
     } else if (e.key === 'ArrowUp' && snake.dy === 0) {
-        snake.dy = -grid;
+        snake.dy = -gridSize;
         snake.dx = 0;
     } else if (e.key === 'ArrowRight' && snake.dx === 0) {
-        snake.dx = grid;
+        snake.dx = gridSize;
         snake.dy = 0;
     } else if (e.key === 'ArrowDown' && snake.dy === 0) {
-        snake.dy = grid;
+        snake.dy = gridSize;
         snake.dx = 0;
     }
 });
 
-// Start the game
-resetGame();
-requestAnimationFrame(gameLoop);
+// Function to initialize the game with user settings
+function initializeGame(userSpeed, userGridSize) {
+    speed = userSpeed;
+    gridSize = userGridSize;
+    resetGame();
+    requestAnimationFrame(gameLoop);
+}
+
+// Start the game with default settings (can be modified)
+initializeGame(4, 20);
