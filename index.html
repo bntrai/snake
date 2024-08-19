@@ -7,8 +7,9 @@
     <style>
         body {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
             background-color: #f0f0f0;
             margin: 0;
@@ -18,10 +19,44 @@
             background-color: #000;
             display: block;
         }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        select {
+            padding: 5px;
+            margin: 0 10px;
+        }
     </style>
 </head>
 <body>
+    <div class="controls">
+        <label for="speed">Speed:</label>
+        <select id="speed">
+            <option value="2">Slow</option>
+            <option value="4" selected>Normal</option>
+            <option value="6">Fast</option>
+            <option value="8">Very Fast</option>
+        </select>
+        
+        <label for="gridSize">Grid Size:</label>
+        <select id="gridSize">
+            <option value="10">Small</option>
+            <option value="20" selected>Medium</option>
+            <option value="30">Large</option>
+        </select>
+        
+        <button onclick="startGame()">Start Game</button>
+    </div>
     <canvas id="gameCanvas" width="400" height="400"></canvas>
     <script src="snake.js"></script>
+    <script>
+        function startGame() {
+            const speed = parseInt(document.getElementById('speed').value);
+            const gridSize = parseInt(document.getElementById('gridSize').value);
+            initializeGame(speed, gridSize);
+        }
+    </script>
 </body>
 </html>
