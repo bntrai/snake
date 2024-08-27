@@ -5,6 +5,7 @@ let gridSize = 20;  // Default grid size
 let speed = 4;      // Default speed
 
 let count = 0;
+let playing = false;
 
 let snake = {
     x: 160,
@@ -40,10 +41,12 @@ function resetGame() {
 
 // Function to handle the main game loop
 function gameLoop() {
+    if (!playing) return;  // Do not run the game loop if the game is not started
+
     requestAnimationFrame(gameLoop);
 
     // Slow down the game loop according to the speed setting
-    if (++count < speed) {
+    if (++count < 10 - speed) {  // Adjusted to control speed
         return;
     }
     count = 0;
@@ -55,6 +58,8 @@ function gameLoop() {
     // Check for wall collisions
     if (snake.x < 0 || snake.x >= canvas.width || snake.y < 0 || snake.y >= canvas.height) {
         resetGame();
+        playing = false;  // Stop the game on collision
+        return;
     }
 
     // Add the new head position to the front of the snake body
@@ -80,43 +85,4 @@ function gameLoop() {
         // Check if the snake ate the apple
         if (cell.x === apple.x && cell.y === apple.y) {
             snake.maxCells++;
-            apple.x = getRandomInt(0, canvas.width / gridSize) * gridSize;
-            apple.y = getRandomInt(0, canvas.height / gridSize) * gridSize;
-        }
-
-        // Check if the snake collides with itself
-        for (let i = index + 1; i < snake.cells.length; i++) {
-            if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
-                resetGame();
-            }
-        }
-    });
-}
-
-// Handle keyboard input for snake direction
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft' && snake.dx === 0) {
-        snake.dx = -gridSize;
-        snake.dy = 0;
-    } else if (e.key === 'ArrowUp' && snake.dy === 0) {
-        snake.dy = -gridSize;
-        snake.dx = 0;
-    } else if (e.key === 'ArrowRight' && snake.dx === 0) {
-        snake.dx = gridSize;
-        snake.dy = 0;
-    } else if (e.key === 'ArrowDown' && snake.dy === 0) {
-        snake.dy = gridSize;
-        snake.dx = 0;
-    }
-});
-
-// Function to initialize the game with user settings
-function initializeGame(userSpeed, userGridSize) {
-    speed = userSpeed;
-    gridSize = userGridSize;
-    resetGame();
-    requestAnimationFrame(gameLoop);
-}
-
-// Start the game with default settings (can be modified)
-initializeGame(speed, gridSize);
+            apple.x =
